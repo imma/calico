@@ -14,6 +14,10 @@ function main {
     return 1
   fi
 
+  if ! type -P loopback >/dev/null; then
+    return 1
+  fi
+
   return 0
 }
 
