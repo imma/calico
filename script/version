@@ -10,7 +10,7 @@ function version {
       ;;
   esac
 
-  local ver_calico="$(calico version --client --short 2>/dev/null | cut -d: -f2 | cut -d'+' -f1 | perl -pe 's{^\s*v}{}')"
+  local ver_calico="$(calico -v 2>/dev/null | perl -pe 's{^v}{}')"
   jq -n --arg calico "$ver_calico" '{calico: $calico}'
 }
 
