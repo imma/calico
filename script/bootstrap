@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+function main {
+  local shome="$(cd -P -- "${BASH_SOURCE%/*}/.." && pwd -P)"
+  source "$shome/script/profile"
+
+  local url_calico_bin_Linux="https://github.com/projectcalico/cni-plugin/releases/download/v${CALICO_VERSION}/calico"
+  local url_calico_ipam_Linux="https://github.com/projectcalico/cni-plugin/releases/download/v${CALICO_VERSION}/calico-ipam"
+  local url_cni_Linux="https://github.com/containernetworking/cni/releases/download/v${CNI_VERSION}/cni-amd64-v${CNI_VERSION}.tgz"
+
+  mkdir -p "$shome/bin"
+
+  for url_calico in $url_calico_bin_Linux $url_calico_ipam_Linux; do
+    local fnm_calico="${CALICO_VERSION}-$(basename "${url_calico}")"
+    cache curl "$fnm_calico" "${url_calico}"
+
+    rsync -ia "/data/cache/curl/$fnm_calico" "$shome/bin/${fnm_calico#*-}"
+    chmod 755 "$shome/bin/${fnm_calico#*-}"
+  done
+
+  for url_cni in $url_cni_Linux; do
+    local fnm_cni="${CNI_VERSION}-$(basename "${url_cni}")"
+    cache curl "$fnm_cni" "${url_cni}"
+
+    rsync -ia "/data/cache/curl/$fnm_cni" "$shome/bin/${fnm_cni#*-}"
+    mkdir -p "$shome/vendor/cni-${CNI_VERSION}"
+    pushd "$shome/vendor/cni-${CNI_VERSION}"
+    tar xfz "/data/cache/curl/$fnm_cni"
+    popd
+  done
+}
+
+main "$@"

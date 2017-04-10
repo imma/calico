@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+function _calico_profile {
+  local shome="${_calico_home:-"$(cd -P -- "${BASH_SOURCE%/*}/.." && pwd -P)"}"
+
+  CALICO_VERSION='1.6.2'
+  CNI_VERSION='0.5.2'
+
+  PATH="$shome/bin:$shome/vendor/cni-${CNI_VERSION}:$PATH"
+}
+
+_calico_profile

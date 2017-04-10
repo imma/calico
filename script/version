@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+function version {
+  local shome="$(cd -P -- "${BASH_SOURCE%/*}/.." && pwd -P)"
+  source "$shome/script/profile"
+
+  case "$(uname -s)" in
+    Darwin)
+      return '{}'
+      ;;
+  esac
+
+  local ver_calico="$(calico version --client --short 2>/dev/null | cut -d: -f2 | cut -d'+' -f1 | perl -pe 's{^\s*v}{}')"
+  jq -n --arg calico "$ver_calico" '{calico: $calico}'
+}
+
+version "$@"
