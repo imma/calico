@@ -6,7 +6,7 @@ function version {
 
   case "$(uname -s)" in
     Darwin)
-      return '{}'
+      return 0
       ;;
   esac
 
